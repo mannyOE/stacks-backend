@@ -7,12 +7,6 @@
     "scripts": {
         "start": "node -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
         "dev": "npx nodemon -e ts --exec \"ts-node -r tsconfig-paths/register src/index.ts\"",
-        "lint": "eslint --ext .ts,.json --max-warnings=0 src",
-        "test": "NODE_ENV=test nyc mocha -r ts-node/register -r tsconfig-paths/register src/**/*.spec.ts",
-        "test:unit": "NODE_ENV=test nyc mocha -r ts-node/register -r tsconfig-paths/register --grep @unit src/**/*.spec.ts",
-        "build": "rm -rf ./dist && npm i && npx tsc && cp -r ./src/utils/templates ./dist/utils/templates && rm -rf ./node_modules/ && npm i --only=prod",
-        "docs": "node_modules/.bin/jsdoc -c jsdoc.json",
-        "deploy": "gh-pages -d docs",
         "cool": "node --inspect=5548 -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
         "cool:watch": "nodemon"
     },
