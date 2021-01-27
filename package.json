@@ -5,8 +5,7 @@
     "description": "Staxave is an entertainment streaming service",
     "main": "src/index.ts",
     "scripts": {
-        "prestart": "npm run build",
-        "start": "node -r ./scripts/tsconfig-path-bootstrap.js ./dist",
+        "start": "node -r tsconfig-paths/register -r ts-node/register ./src/index.ts",
         "dev": "npx nodemon -e ts --exec \"ts-node -r tsconfig-paths/register src/index.ts\"",
         "lint": "eslint --ext .ts,.json --max-warnings=0 src",
         "test": "NODE_ENV=test nyc mocha -r ts-node/register -r tsconfig-paths/register src/**/*.spec.ts",
