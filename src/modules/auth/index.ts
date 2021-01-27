@@ -117,7 +117,7 @@ class Auth extends Module {
 		return Promise.resolve(randPassword)
 	}
 
-	public async createOTP(email: string, user: string, name: string): Promise<string> {
+	public async createOTP(email: string, user: string, name: string, template: string): Promise<string> {
 		// Todo: implement create project
 		const otp = await this.generateCode(6)
 		
@@ -137,7 +137,7 @@ class Auth extends Module {
             await exist.save()
         }
         
-		let content = await getTemplate('verify', {
+		let content = await getTemplate(template, {
             email,
             name,
             code: exist.code
@@ -180,7 +180,7 @@ class Auth extends Module {
 			return Promise.resolve({
 				accessToken: {
 					token: updateToken,
-					expires: expiresIn
+					expires: expiresIn+new Date().getTime()
 				},
 				user: info as UserInterface
 			})
@@ -205,7 +205,7 @@ class Auth extends Module {
 
 
 			await account.save()
-			await this.createOTP(account.email, account._id.toString(), account.full_name)
+			await this.createOTP(account.email, account._id.toString(), account.full_name, 'verify')
 			account.password = data.password
 			await account.save()
 			return 'Account created. Verification code sent to your email address.'
@@ -237,7 +237,7 @@ class Auth extends Module {
 			throw new InvalidAccessCredentialsException('This password is invalid')
 		}
 		if (!accountExists.verified) {
-			await this.createOTP(accountExists.email, accountExists._id.toString(), accountExists.full_name)
+			await this.createOTP(accountExists.email, accountExists._id.toString(), accountExists.full_name, 'verify')
 			throw new InvalidAccessCredentialsException(
 				'Your account has not been confirmed. Please check your mail inbox'
 			)
@@ -250,7 +250,7 @@ class Auth extends Module {
 		return Promise.resolve({
 			accessToken: {
 				token,
-				expires: expiresIn
+				expires: expiresIn+new Date().getTime()
 			},
 			user: accountExists
 		})
@@ -276,7 +276,7 @@ class Auth extends Module {
 			)
 		}
 		// Todo: Send forgot password email
-		await this.createOTP(accountExists.email, accountExists._id.toString(), accountExists.full_name)
+		await this.createOTP(accountExists.email, accountExists._id.toString(), accountExists.full_name, 'forgot-password')
 
 		return Promise.resolve({mobile: accountExists.email})
 	}
@@ -317,7 +317,7 @@ class Auth extends Module {
             return Promise.resolve({
                 accessToken: {
                     token,
-                    expires: expiresIn
+                    expires: expiresIn+new Date().getTime()
                 },
                 user: accountExists
             })

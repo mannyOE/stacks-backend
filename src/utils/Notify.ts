@@ -89,7 +89,7 @@ class NotificationModule extends Module {
 			const message: Email.SendParamsMessage = {
 				From: {
 					Name: this.senderName,
-					Email: this.senderEmail || 'service-noreply@power-invest.com'
+					Email: this.senderEmail || 'staxx@power-invest.com'
 				},
 				Subject: mail.subject,
 				HTMLPart: mail.content,
