@@ -118,3 +118,5 @@ class AuthValidator extends Ctrl {
 }
 
 export default AuthValidator
+// https://quiet-anchorage-17876.herokuapp.com/
+// https://git.heroku.com/quiet-anchorage-17876.git
