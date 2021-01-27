@@ -117,7 +117,7 @@ class Auth extends Module {
 		return Promise.resolve(randPassword)
 	}
 
-	public async createOTP(email: string, user: string, name: string, template: string): Promise<string> {
+	public async createOTP(email: string, user: string): Promise<string> {
 		// Todo: implement create project
 		const otp = await this.generateCode(6)
 		
@@ -136,18 +136,7 @@ class Auth extends Module {
             exist.expires = expires
             await exist.save()
         }
-        
-		let content = await getTemplate(template, {
-            email,
-            name,
-            code: exist.code
-        })
-        await new Notify().sendMail({
-            content,
-            email,
-            subject: 'Verify your Staxave account'
-        })
-		return Promise.resolve('OTP sent to ' + email)
+		return Promise.resolve(exist.code)
 	}
 
 	public async verifyOTP(code: string): Promise<LoginReturn> {
@@ -175,7 +164,7 @@ class Auth extends Module {
             await new Notify().sendMail({
                 content,
                 email: info.email,
-                subject: 'Verify your Staxave account'
+                subject: 'Welcome to Staxave'
             })
 			return Promise.resolve({
 				accessToken: {
@@ -205,7 +194,17 @@ class Auth extends Module {
 
 
 			await account.save()
-			await this.createOTP(account.email, account._id.toString(), account.full_name, 'verify')
+            let code = await this.createOTP(account.email, account._id.toString())
+            let content = await getTemplate('verify', {
+                email: account.email,
+                name: account.full_name,
+                code: code
+            })
+            await new Notify().sendMail({
+                content,
+                email: account.email,
+                subject: 'Verify your Staxave account'
+            })
 			account.password = data.password
 			await account.save()
 			return 'Account created. Verification code sent to your email address.'
@@ -237,7 +236,17 @@ class Auth extends Module {
 			throw new InvalidAccessCredentialsException('This password is invalid')
 		}
 		if (!accountExists.verified) {
-			await this.createOTP(accountExists.email, accountExists._id.toString(), accountExists.full_name, 'verify')
+			let code = await this.createOTP(accountExists.email, accountExists._id.toString())
+            let content = await getTemplate('verify', {
+                email: accountExists.email,
+                name: accountExists.full_name,
+                code: code
+            })
+            await new Notify().sendMail({
+                content,
+                email: accountExists.email,
+                subject: 'Verify your Staxave account'
+            })
 			throw new InvalidAccessCredentialsException(
 				'Your account has not been confirmed. Please check your mail inbox'
 			)
@@ -276,7 +285,17 @@ class Auth extends Module {
 			)
 		}
 		// Todo: Send forgot password email
-		await this.createOTP(accountExists.email, accountExists._id.toString(), accountExists.full_name, 'forgot-password')
+		let code = await this.createOTP(accountExists.email, accountExists._id.toString())
+            let content = await getTemplate('forgot-password', {
+                email: accountExists.email,
+                name: accountExists.full_name,
+                code: code
+            })
+            await new Notify().sendMail({
+                content,
+                email: accountExists.email,
+                subject: 'Password Reset on Staxave'
+            })
 
 		return Promise.resolve({mobile: accountExists.email})
 	}
