@@ -1,6 +1,7 @@
 import {Connection, Model, Schema, Document} from 'mongoose'
 export interface ProviderInterface extends Document {
     phone: string
+    address: string
     approved: boolean
     email: string
     name: string
@@ -14,6 +15,9 @@ const ProviderSchema = new Schema(
 			type: String
         },
         phone: {
+			type: String
+        },
+        address: {
 			type: String
         },
         approved: {
