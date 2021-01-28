@@ -32,7 +32,8 @@ export interface UserInterface extends Document {
 	/**
 	 * @param {string} mobile number of user
 	 */
-	mobile: string
+    mobile: string
+    provider: string
 	/**
 	 * hashed password of user
 	 * @param {string} password
@@ -76,6 +77,10 @@ export const UserSchema = new Schema(
 
 		mobile: {
 			type: Schema.Types.String,
+        },
+        provider: {
+            type: Schema.Types.ObjectId,
+            ref: "Providers"
 		},
 		avatar: {
 			type: Schema.Types.String

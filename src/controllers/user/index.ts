@@ -80,6 +80,19 @@ class UserCtrl extends Index {
 				this.handleError(error, req, res)
 			}
 		}
+    }
+    apply(): RequestHandler {
+		return async (req: Request, res: Response): Promise<void> => {
+			try {
+				// @ts-ignore
+                const account = req.account
+                let data = req.body
+				let profile = await this.module.apply(account, data)
+				this.ok(res, 'Application received', profile)
+			} catch (error) {
+				this.handleError(error, req, res)
+			}
+		}
 	}
 }
 export {Validator}

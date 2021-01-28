@@ -8,13 +8,15 @@ import {
 } from '@exceptions/index'
 import Notify from '@src/utils/Notify'
 import {getTemplate} from '@src/utils/resolve-template'
+import { ProviderInterface } from '@src/models/providers'
 /**
  * User module constructor type
  * @type UserModuleProps
  * @category Module
  */
 export type UserModuleProps = {
-	model: Model<UserInterface>
+    model: Model<UserInterface>
+    providers: Model<ProviderInterface>
 }
 
 interface TokenPayloadInterface {
@@ -31,7 +33,8 @@ interface ProfileReturn {
  * @category Modules
  */
 class User extends Module {
-	private model: Model<UserInterface>
+    private model: Model<UserInterface>
+    private providers: Model<ProviderInterface>
 
 	/**
 	 * @constructor
@@ -39,28 +42,16 @@ class User extends Module {
 	 */
 	constructor(props: UserModuleProps) {
 		super()
-		this.model = props.model
+        this.model = props.model
+        this.providers = props.providers
 	}
 
-	/**
-	 * fetch a single member info
-	 * @param {string} member the user id of the member
-	 * @param {UserInterface} account the decoded account of the user
-	 * @param {object} update the data to update the member with
-	 * @throws MongooseError.ValidationError
-	 * @throws MongoError
-	 * @return {Promise<UserInterface>}
-	 */
+	
 	public async updateMe(
 		account: UserInterface,
 		update: object
 	): Promise<UserInterface> {
 		try {
-			// @ts-ignore
-			let sponsor = update.sponsor
-			// @ts-ignore
-			delete update.sponsor
-			
 			// @ts-ignore
 			await this.model.findOneAndUpdate(
 				{
@@ -72,19 +63,22 @@ class User extends Module {
 		} catch (error) {
 			throw new BadInputFormatException('could not find this member')
 		}
+    }
+    
+    public async apply(
+		account: UserInterface,
+		data: any
+	): Promise<any> {
+		try {
+            let provider = new this.providers(data)
+            await this.model.findByIdAndUpdate(account._id, { $set: { provider: provider._id } })
+            await provider.save()
+			return await this.account(account._id.toString())
+		} catch (error) {
+			throw new BadInputFormatException('could not find this member')
+		}
 	}
 
-	
-
-	/**
-	 * update a logged in user's password
-	 * @param {string} oldPassword old password of the user
-	 * @param {UserInterface} account the decoded account of the user
-	 * @param {string} newPassword new password to replace the old one.
-	 * @throws MongooseError.ValidationError
-	 * @throws MongoError
-	 * @return {Promise<UserInterface>}
-	 */
 	public async updatePassword(
 		account: UserInterface,
 		oldPassword: string,
@@ -104,20 +98,13 @@ class User extends Module {
 		await info.save()
 	}
 
-	/**
-	 * fetch a user profile info
-	 * @param {UserInterface} account the decoded account of the user
-	 * @throws MongooseError.ValidationError
-	 * @throws MongoError
-	 * @return {Promise<UserInterface>}
-	 */
 	public async profile(account: UserInterface): Promise<ProfileReturn> {
 		try {
 			let info = await this.model
 				.findOne({
 					_id: account._id
 				})
-				.populate('sponsor')
+				.populate('provider')
 			if (!info) {
 				throw new Error()
 			}
@@ -133,7 +120,7 @@ class User extends Module {
 				.findOne({
 					_id: account
 				})
-				.populate('sponsor')
+				.populate('provider')
 			if (!info) {
 				throw new Error()
 			}

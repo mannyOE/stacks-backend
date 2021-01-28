@@ -14,6 +14,7 @@ const router: expressRouter = expressRouter()
 router.get('/me', auth.verify(), userCtrl.fetchMe())
 
 router.put('/update/', auth.verify(), userCtrl.updateMe())
+router.post('/apply', auth.verify(), userCtrl.apply())
 router.put('/update-sponsor', auth.verify(), userCtrl.updateMe())
 
 router.put(

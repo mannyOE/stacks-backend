@@ -3,7 +3,8 @@ import {createConnection, Connection, Model} from 'mongoose'
 import conf from '@configs/mongo'
 
 import userFactory, {UserInterface} from './user'
-import otpFactory, {OTPInterface} from './otps'
+import otpFactory, { OTPInterface } from './otps'
+import providerFactory, {ProviderInterface} from './providers'
 
 /**
  * @param {Connection} conn The mongoose connection instance for mongodb
@@ -17,5 +18,7 @@ export const conn: Connection = createConnection(conf.uri, conf.options)
  */
 export const User: Model<UserInterface> = userFactory(conn)
 export const OTP: Model<OTPInterface> = otpFactory(conn)
+export const Providers: Model<ProviderInterface> = providerFactory(conn)
+
 
 conn.once('open', (): void => console.log('db connection open'))
