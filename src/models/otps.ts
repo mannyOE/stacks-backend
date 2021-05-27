@@ -3,6 +3,7 @@ export interface OTPInterface extends Document {
 	phone: string
 	code: string
     user: string
+    type: string
     expires: Date
 }
 const OTPSchema = new Schema(
@@ -11,6 +12,9 @@ const OTPSchema = new Schema(
 			type: String
 		},
 		code: {
+			type: String
+        },
+        type: {
 			type: String
         },
         expires: {

@@ -2,18 +2,18 @@ import {Request, Response, RequestHandler} from 'express'
 import Ctrl from '@controllers/ctrl'
 
 import Validator from './validation'
-import UserAuthentication from '@modules/users/auth'
+import AdminAuthentication from '@modules/admins/auth'
 
 /**
  * Authentication controller
  * @category Controllers
  */
 class AuthCtrl extends Ctrl {
-	private module: UserAuthentication
+	private module: AdminAuthentication
 	/**
 	 * @constructor
 	 */
-	constructor(module: UserAuthentication) {
+	constructor(module: AdminAuthentication) {
 		super()
 		this.module = module
 	}

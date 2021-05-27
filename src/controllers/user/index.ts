@@ -1,7 +1,7 @@
 import {Request, Response, RequestHandler} from 'express'
 
 import Validator from './validator'
-import User from '@modules/user'
+import UserProfile from '@modules/users/user'
 import Index from '@controllers/ctrl'
 import {InvalidAccessCredentialsException} from '@src/exceptions'
 import Permits from '@src/utils/Permits'
@@ -14,13 +14,13 @@ class UserCtrl extends Index {
 	/**
 	 * @param {User} module Instance of Person module
 	 */
-	private module: User
+	private module: UserProfile
 
 	/**
 	 * @constructor
 	 * @param {User} module instance of user module
 	 */
-	constructor(module: User) {
+	constructor(module: UserProfile) {
 		super()
 		this.module = module
 	}

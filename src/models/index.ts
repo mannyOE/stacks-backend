@@ -4,6 +4,7 @@ import conf from '@configs/mongo'
 
 import userFactory, {UserInterface} from './user'
 import otpFactory, { OTPInterface } from './otps'
+import adminFactory, { AdminInterface } from './administrators'
 import providerFactory, {ProviderInterface} from './providers'
 
 /**
@@ -18,6 +19,7 @@ export const conn: Connection = createConnection(conf.uri, conf.options)
  */
 export const User: Model<UserInterface> = userFactory(conn)
 export const OTP: Model<OTPInterface> = otpFactory(conn)
+export const ADMIN: Model<AdminInterface> = adminFactory(conn)
 export const Providers: Model<ProviderInterface> = providerFactory(conn)
 
 

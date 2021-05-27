@@ -71,7 +71,7 @@ class User extends Module {
 	): Promise<any> {
 		try {
             let provider = new this.providers(data)
-            await this.model.findByIdAndUpdate(account._id, { $set: { provider: provider._id } })
+            await this.model.findByIdAndUpdate(account._id, { $set: { supplier: provider._id } })
             await provider.save()
 			return await this.account(account._id.toString())
 		} catch (error) {

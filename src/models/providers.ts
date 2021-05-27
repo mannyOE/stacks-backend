@@ -41,10 +41,10 @@ const ProviderSchema = new Schema(
 	{
 		timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'},
 		versionKey: false,
-		collection: 'providers'
+		collection: 'suppliers'
 	}
 )
 
 export default function factory(conn: Connection): Model<ProviderInterface> {
-	return conn.model<ProviderInterface>('Providers', ProviderSchema)
+	return conn.model<ProviderInterface>('Suppliers', ProviderSchema)
 }

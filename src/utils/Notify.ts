@@ -6,7 +6,7 @@ import {post} from 'request-promise'
 
 const serviceAccount = require(join(
 	__dirname,
-	'../../power-invest-firebase.json'
+	'../../service-account.json'
 ))
 
 const firebaseApp = initializeApp(

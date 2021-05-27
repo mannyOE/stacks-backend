@@ -1,6 +1,5 @@
 import {join} from 'path'
 import {existsSync, readFileSync} from 'fs'
-import {Template} from '@src/modules/auth'
 export async function getTemplate(
 	template: string,
 	data: any

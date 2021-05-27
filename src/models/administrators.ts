@@ -9,7 +9,7 @@ const salt = genSaltSync(10)
  * @interface
  * @category Models
  */
-export interface UserInterface extends Document {
+export interface AdminInterface extends Document {
 	/**
 	 * @param {Function} comparePWD mongoose method to compare password
 	 */
@@ -27,13 +27,8 @@ export interface UserInterface extends Document {
 	/**
 	 * @param {string} email The email of user
 	 */
-	email: string
-
-	/**
-	 * @param {string} mobile number of user
-	 */
+    email: string
     mobile: string
-    supplier: string
 	/**
 	 * hashed password of user
 	 * @param {string} password
@@ -73,14 +68,11 @@ export const UserSchema = new Schema(
 			type: Schema.Types.String,
 			unique: true,
 			required: true
-		},
-
-		mobile: {
-			type: Schema.Types.String,
         },
-        supplier: {
-            type: Schema.Types.ObjectId,
-            ref: "Suppliers"
+        mobile: {
+			type: Schema.Types.String,
+			unique: true,
+			required: true
 		},
 		avatar: {
 			type: Schema.Types.String
@@ -101,7 +93,7 @@ export const UserSchema = new Schema(
 		},
 	},
 	{
-		collection: 'users',
+		collection: 'administrators',
 		timestamps: {createdAt: 'createdAt', updatedAt: 'updatedAt'}
 	}
 )
@@ -114,7 +106,7 @@ UserSchema.methods.comparePWD = async function (
 	return Promise.resolve(isCorrect)
 }
 
-UserSchema.pre<UserInterface>('save', async function (next): Promise<void> {
+UserSchema.pre<AdminInterface>('save', async function (next): Promise<void> {
 	// Todo: convert plain password to hashed password
 	if (this.isModified('password')) {
 		this.password = await hash(this.password, salt)
@@ -122,7 +114,7 @@ UserSchema.pre<UserInterface>('save', async function (next): Promise<void> {
 	next()
 })
 
-UserSchema.pre<UserInterface>('update', async function (next): Promise<void> {
+UserSchema.pre<AdminInterface>('update', async function (next): Promise<void> {
 	// Todo: convert plain password to hashed password if password is part of update
 	if (this.isModified('password')) {
 		this.password = await hash(this.password, salt)
@@ -135,9 +127,9 @@ UserSchema.plugin(mongoosePaginate)
 /**
  * Factory to generate User Model
  * @param {Connection} conn
- * @return {Model<UserInterface>}
+ * @return {Model<AdminInterface>}
  * @category Models
  */
-export default function userFactory(conn: Connection): Model<UserInterface> {
-	return conn.model<UserInterface>('Users', UserSchema)
+export default function userFactory(conn: Connection): Model<AdminInterface> {
+	return conn.model<AdminInterface>('Administrators', UserSchema)
 }

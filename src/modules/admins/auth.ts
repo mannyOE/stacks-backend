@@ -1,6 +1,5 @@
 import {Model} from 'mongoose'
 import {getTemplate} from '../../utils/resolve-template'
-import {UserInterface} from '@models/user'
 import {Module, QueryInterface} from '@modules/module/index'
 import {verify, sign} from 'jsonwebtoken'
 import {
@@ -10,6 +9,7 @@ import {
 } from '@exceptions/index'
 import Notify from '@src/utils/Notify'
 import {OTPInterface} from '@src/models/otps'
+import { AdminInterface } from '@src/models/administrators'
 export const tokenKey = '1Z2E3E4D5A6S7-8P9A0SSWORD'
 export const PASSWORD = '@11Poster'
 const moment =  require('moment')
@@ -20,7 +20,7 @@ const moment =  require('moment')
  * @category Module
  */
 export type UserModuleProps = {
-	model: Model<UserInterface>
+    model: Model<AdminInterface>
 	otps: Model<OTPInterface>
 }
 
@@ -47,12 +47,12 @@ export type Template = {
 }
 
 interface LoginReturn {
-	user: UserInterface
+	user: AdminInterface
 	accessToken: TokenInterface
 }
 
 export type NewUser = Pick<
-	UserInterface,
+	AdminInterface,
 	'full_name' | 'email' | 'password' | 'mobile'
 >
 
@@ -93,8 +93,8 @@ export interface VerifyInput {
  * @category Modules
  */
 class Auth extends Module {
-	private model: Model<UserInterface>
-	private otps: Model<OTPInterface>
+	private model: Model<AdminInterface>
+    private otps: Model<OTPInterface>
 
 	/**
 	 * @constructor
@@ -103,7 +103,7 @@ class Auth extends Module {
 	constructor(props: UserModuleProps) {
 		super()
 		this.model = props.model
-		this.otps = props.otps
+        this.otps = props.otps
 	}
 
 	private async generateCode(len = 10): Promise<string> {
@@ -171,7 +171,7 @@ class Auth extends Module {
 					token: updateToken,
 					expires: expiresIn+new Date().getTime()
 				},
-				user: info as UserInterface
+				user: info as AdminInterface
 			})
 		}
 	}
@@ -179,7 +179,7 @@ class Auth extends Module {
 	public async create(data: NewUser): Promise<string> {
 		// check to ensure the company name is unique
 		try {
-			const userExists: UserInterface | null = await this.model.findOne({
+			const userExists: AdminInterface | null = await this.model.findOne({
 				email: data.email
 			})
 			if (userExists) {
@@ -211,8 +211,7 @@ class Auth extends Module {
 		} catch (error) {
 			throw new BadInputFormatException(error.message)
 		}
-	}
-
+    }
 	/**
 	 * Logs in to an account
 	 * @param {LoginInput} data property of user needed to login
@@ -222,10 +221,10 @@ class Auth extends Module {
 	 */
 	public async login(data: LoginInput): Promise<LoginReturn> {
 		// check to ensure the company name is unique
-		let accountExists: UserInterface | null
+		let accountExists: AdminInterface | null
         accountExists = await this.model.findOne({
             email: data.email
-        })
+        }).populate("supplier")
 		if (!accountExists) {
 			throw new InvalidAccessCredentialsException(
 				'This account is does not exists'
@@ -276,7 +275,7 @@ class Auth extends Module {
 		data: ForgotPasswordInput
 	): Promise<Record<string, unknown>> {
 		// check to ensure the company name is unique
-		const accountExists: UserInterface | null = await this.model.findOne({
+		const accountExists: AdminInterface | null = await this.model.findOne({
 			email: data.email
 		})
 		if (!accountExists) {
@@ -317,7 +316,7 @@ class Auth extends Module {
 			if (!exist) {
 				throw new InvalidAccessCredentialsException('Provided OTP is invalid')
 			}
-			const accountExists: UserInterface | null = await this.model.findOne({
+			const accountExists: AdminInterface | null = await this.model.findOne({
 				_id: exist.user
 			})
 			if (!accountExists) {

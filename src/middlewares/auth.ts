@@ -5,9 +5,9 @@ import {
 	BadInputFormatException,
 	InvalidAccessCredentialsException
 } from '@exceptions/index'
-import {user} from '@modules/index'
-import {TokenPayloadInterface} from '@src/modules/auth'
-import {tokenKey} from '@modules/auth/index'
+import {userProfile as user} from '@modules/index'
+import {TokenPayloadInterface} from '@src/modules/users/auth'
+import {tokenKey} from '@modules/users/auth'
 import {UserInterface} from '@src/models/user'
 
 /**

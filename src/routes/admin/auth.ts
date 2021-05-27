@@ -1,5 +1,5 @@
 import {Router as expressRouter} from 'express'
-import {userAuthCtrl} from '@controllers/index'
+import {adminAuthCtrl as authCtrl} from '@controllers/index'
 import {Validator} from '@controllers/auth'
 const val = new Validator()
 
@@ -13,14 +13,14 @@ const router: expressRouter = expressRouter()
 router.post(
 	'/signup',
 	Validator.register(),
-	val.validate(),
-	userAuthCtrl.register()
+    val.validate(),
+    authCtrl.register()
 )
 router.post(
 	'/verify-account',
 	Validator.verifyAccount(),
 	val.validate(),
-	userAuthCtrl.verifyAccount()
+	authCtrl.verifyAccount()
 )
 
 // password recovery
@@ -28,16 +28,16 @@ router.post(
 	'/forgot-password',
 	Validator.forgotPassword(),
 	val.validate(),
-	userAuthCtrl.forgotPassword()
+	authCtrl.forgotPassword()
 )
 router.post(
 	'/reset-password',
 	Validator.resetPassword(),
 	val.validate(),
-	userAuthCtrl.resetPassword()
+	authCtrl.resetPassword()
 )
 
 
-router.post('/login', Validator.login(), val.validate(), userAuthCtrl.login())
+router.post('/login', Validator.login(), val.validate(), authCtrl.login())
 
 export default router
