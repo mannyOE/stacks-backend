@@ -1,1 +1,3 @@
 node_modules/
+.gitignore
+service-account.json
